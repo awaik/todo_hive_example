@@ -12,5 +12,5 @@ class Todo extends HiveObject {
   @HiveField(3)
   String task;
 
-  Todo({this.complete = false, this.note, this.task});
+  Todo({this.complete = false, this.note = '', this.task});
 }

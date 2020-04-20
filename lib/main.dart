@@ -10,11 +10,21 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TodoAdapter());
   await Hive.openBox<Todo>(HiveBoxes.todo);
-
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void dispose() async {
+    Hive.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -54,9 +64,15 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               Todo res = box.getAt(index);
               return ListTile(
-                title: Text(res.task),
-                subtitle: Text(res.note),
-              );
+                  title: Text(res.task == null ? '' : res.task),
+                  subtitle: Text(res.note == null ? '' : res.note),
+                  leading: res.complete
+                      ? Icon(Icons.check_box)
+                      : Icon(Icons.check_box_outline_blank),
+                  onTap: () {
+                    res.complete = !res.complete;
+                    res.save();
+                  });
             },
           );
         },

@@ -13,6 +13,7 @@ class AddTodo extends StatefulWidget {
 class _AddTodoState extends State<AddTodo> {
   String task;
   String note;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class _AddTodoState extends State<AddTodo> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
-            key: widget.formKey,
+            key: _formKey,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -28,30 +29,35 @@ class _AddTodoState extends State<AddTodo> {
                 children: <Widget>[
                   TextFormField(
                     autofocus: true,
-                    initialValue: "",
+                    initialValue: '',
                     decoration: const InputDecoration(
-                      labelText: "Task",
+                      labelText: 'Task',
                     ),
                     onChanged: (value) {
                       setState(() {
                         task = value;
                       });
                     },
+                    validator: (val) {
+                      return val.trim().isEmpty
+                          ? 'Task name should not be empty'
+                          : null;
+                    },
                   ),
                   TextFormField(
-                    initialValue: "",
+                    initialValue: '',
                     decoration: const InputDecoration(
-                      labelText: "Note",
+                      labelText: 'Note',
                     ),
                     onChanged: (value) {
                       setState(() {
-                        note = value;
+                        note = value == null ? '' : value;
                       });
                     },
                   ),
                   OutlineButton(
-                    child: Text("Add"),
-                    onPressed: _onFormSubmit,
+                    child: Text('Add'),
+                    onPressed: _validateAndSave,
                   ),
                 ],
               ),
@@ -60,6 +66,15 @@ class _AddTodoState extends State<AddTodo> {
         ),
       ),
     );
+  }
+
+  void _validateAndSave() {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      _onFormSubmit();
+    } else {
+      print('form is invalid');
+    }
   }
 
   void _onFormSubmit() {
