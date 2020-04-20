@@ -63,16 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
             itemCount: box.values.length,
             itemBuilder: (context, index) {
               Todo res = box.getAt(index);
-              return ListTile(
-                  title: Text(res.task == null ? '' : res.task),
-                  subtitle: Text(res.note == null ? '' : res.note),
-                  leading: res.complete
-                      ? Icon(Icons.check_box)
-                      : Icon(Icons.check_box_outline_blank),
-                  onTap: () {
-                    res.complete = !res.complete;
-                    res.save();
-                  });
+              return Dismissible(
+                background: Container(color: Colors.red),
+                key: UniqueKey(),
+                onDismissed: (direction) {
+                  res.delete();
+                },
+                child: ListTile(
+                    title: Text(res.task == null ? '' : res.task),
+                    subtitle: Text(res.note == null ? '' : res.note),
+                    leading: res.complete
+                        ? Icon(Icons.check_box)
+                        : Icon(Icons.check_box_outline_blank),
+                    onTap: () {
+                      res.complete = !res.complete;
+                      res.save();
+                    }),
+              );
             },
           );
         },
